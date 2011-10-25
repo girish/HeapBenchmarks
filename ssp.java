@@ -89,7 +89,7 @@ class LinkedList implements Iterable<ListNode>{
 }
 
 class Graph {
-    public static final double INFINITY = Double.MAX_VALUE;
+    public static final Integer INFINITY = Integer.MAX_VALUE;
     private int vertices;
     public LinkedList[] adj;
 
@@ -113,7 +113,7 @@ class Graph {
        }
     public void RandomGraph(){
       //  for(int i=0; i<vertices;i++)
-            for(int j=0; j<vertices;j++ ){
+            for(int j=0; j<vertices -4;j++ ){
                 int weight = (int) Math.round(100 * Math.random());
                 System.out.println(weight);
                 adj[j].add((j+1)%vertices, weight);
@@ -150,7 +150,7 @@ class ArrayQueue {
         this.dist = new int[size];
         this.visited = new boolean[size];
         for(int i=0;i<size;i++)
-            dist[i]= (int) Graph.INFINITY;
+            dist[i]=  Graph.INFINITY;
         for(int i=0;i<size;i++)
             visited[i]=false;
     }
@@ -174,11 +174,11 @@ class ArrayQueue {
         // wrong for non Connected graph
         boolean x=true;
         for(int i=0;i<size;i++)
-            x &= visited[i];
+            x &= (visited[i] | (dist[i] == Graph.INFINITY));
         return x;
     }
     public boolean contains(int vertex){
-        if(dist[vertex] == -1)
+        if(dist[vertex] == Graph.INFINITY)
             return false;
         else
             return true;
@@ -198,7 +198,7 @@ class Dsp {
         this.g = G;
         pq = new ArrayQueue(G.noOfVertices());
         for (int v = 0; v < G.noOfVertices(); v++)
-            dist[v] = (int)Graph.INFINITY;
+            dist[v] = Graph.INFINITY;
         dist[source] = 0;
 
         //relax vertices in order of distance from send
@@ -228,7 +228,7 @@ class Dsp {
 
 public class ssp {
     public static void main(String[] args){
-        Graph G=new Graph(5);
+        Graph G=new Graph(15);
         G.RandomGraph();
         G.print();
         Dsp d = new Dsp(G, 1);
