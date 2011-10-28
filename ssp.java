@@ -171,18 +171,14 @@ class ArrayQueue {
     }
 
     public boolean isEmpty(){
-        // wrong for non Connected graph
+        // works for non Connected graph
         boolean x=true;
         for(int i=0;i<size;i++)
             x &= (visited[i] | (dist[i] == Graph.INFINITY));
         return x;
     }
     public boolean contains(int vertex){
-        if(dist[vertex] == Graph.INFINITY)
-            return false;
-        else
-            return true;
-
+        return (dist[vertex] != Graph.INFINITY))
     }
 }
 
