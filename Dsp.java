@@ -8,7 +8,9 @@ class Dsp {
         dist = new int[G.noOfVertices()];
         edge = new int[G.noOfVertices()];
         this.g = G;
-        pq = new ArrayQueue(dist);
+        //pq = new ArrayQueue(dist);
+        //pq = new BinomialQueue(dist);
+        pq = new FibonacciQueue(dist);
         for (int v = 0; v < G.noOfVertices(); v++)
             dist[v] = Graph.INFINITY;
         dist[source] = 0;
@@ -39,5 +41,4 @@ class Dsp {
         for(int i=0;i < g.noOfVertices(); i++)
             System.out.println(dist[i]);
     }
-
 }

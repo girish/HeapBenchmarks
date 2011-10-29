@@ -6,7 +6,7 @@ public class FibonacciHeap
 {
 
 
-    private FibonacciHeapNode min;
+    private Fnode min;
 
     private int nNodes;
 
@@ -21,7 +21,7 @@ public class FibonacciHeap
         return min == null;
     }
 
-    public void decreaseKey(FibonacciHeapNode x, int k)
+    public void decreaseKey(Fnode x, int k)
     {
         if (k > x.key) {
             throw new IllegalArgumentException(
@@ -30,7 +30,7 @@ public class FibonacciHeap
 
         x.key = k;
 
-        FibonacciHeapNode y = x.parent;
+        Fnode y = x.parent;
 
         if ((y != null) && (x.key < y.key)) {
             cut(x, y);
@@ -42,7 +42,7 @@ public class FibonacciHeap
         }
     }
 
-    public void insert(FibonacciHeapNode node)
+    public void insert(Fnode node)
     {
         if (min != null) {
             node.left = min;
@@ -63,12 +63,12 @@ public class FibonacciHeap
 
     public int removeMin()
     {
-        FibonacciHeapNode z = min;
+        Fnode z = min;
 
         if (z != null) {
             int numKids = z.degree;
-            FibonacciHeapNode x = z.child;
-            FibonacciHeapNode tempRight;
+            Fnode x = z.child;
+            Fnode tempRight;
 
             // for each child of z do...
             while (numKids > 0) {
@@ -113,9 +113,9 @@ public class FibonacciHeap
         return nNodes;
     }
 
-    protected void cascadingCut(FibonacciHeapNode y)
+    protected void cascadingCut(Fnode y)
     {
-        FibonacciHeapNode z = y.parent;
+        Fnode z = y.parent;
 
         // if there's a parent...
         if (z != null) {
@@ -140,14 +140,14 @@ public class FibonacciHeap
 
         int arraySize = (int) Math.floor(Math.log(nNodes) / Math.log(phi));
 
-        FibonacciHeapNode[] array=new FibonacciHeapNode[arraySize];
+        Fnode[] array=new Fnode[arraySize];
 
         for (int i = 0; i < arraySize; i++) {
             array[i] = null;
         }
 
         int numRoots = 0;
-        FibonacciHeapNode x = min;
+        Fnode x = min;
 
         if (x != null) {
             numRoots++;
@@ -163,20 +163,20 @@ public class FibonacciHeap
         while (numRoots > 0) {
             // Access this node's degree..
             int d = x.degree;
-            FibonacciHeapNode next = x.right;
+            Fnode next = x.right;
 
             // ..and see if there's another of the same degree.
             while (array[d]!=null) {
-                FibonacciHeapNode y = array[d];
+                Fnode y = array[d];
                 // There is, make one of the nodes a child of the other.
                 // Do this based on the key value.
                 if (x.key > y.key) {
-                    FibonacciHeapNode temp = y;
+                    Fnode temp = y;
                     y = x;
                     x = temp;
                 }
 
-                // FibonacciHeapNode<T> y disappears from root list.
+                // Fnode<T> y disappears from root list.
                 link(y, x);
 
                 // We've handled this degree, go to next one.
@@ -198,7 +198,7 @@ public class FibonacciHeap
         min = null;
 
         for (int i = 0; i < arraySize; i++) {
-            FibonacciHeapNode y = array[i];
+            Fnode y = array[i];
             if (y == null) {
                 continue;
             }
@@ -234,7 +234,7 @@ public class FibonacciHeap
      * @param x child of y to be removed from y's child list
      * @param y parent of x about to lose a child
      */
-    protected void cut(FibonacciHeapNode x, FibonacciHeapNode y)
+    protected void cut(Fnode x, Fnode y)
     {
         // remove x from childlist of y and decrement degree[y]
         x.left.right = x.right;
@@ -273,7 +273,7 @@ public class FibonacciHeap
      * @param y node to become child
      * @param x node to become parent
      */
-    protected void link(FibonacciHeapNode y, FibonacciHeapNode x)
+    protected void link(Fnode y, Fnode x)
     {
         // remove y from root list of heap
         y.left.right = y.right;
@@ -305,20 +305,20 @@ public class FibonacciHeap
     //
     public static void main(String[] args){
         FibonacciHeap b = new FibonacciHeap();
-        FibonacciHeapNode[] t;
-        t = new FibonacciHeapNode[10000];
+        Fnode[] t;
+        t = new Fnode[10000];
         for(int i=0;i<10000;i++){
-            t[i] = new FibonacciHeapNode(i,(int)Math.round(1000*Math.random()));
+            t[i] = new Fnode(i,(int)Math.round(1000*Math.random()));
             b.insert(t[i]);
         }
-        //t[0] = new FibonacciHeapNode(0, 0);
-        //t[1] = new FibonacciHeapNode(1, 1);
-        //t[2] = new FibonacciHeapNode(2, 2);
-        //t[3] = new FibonacciHeapNode(3, 3);
-        //t[4] = new FibonacciHeapNode(4, 4);
-        //t[5] = new FibonacciHeapNode(5, 5);
-        //t[6] = new FibonacciHeapNode(6, 6);
-        //t[7] = new FibonacciHeapNode(7, 7);
+        //t[0] = new Fnode(0, 0);
+        //t[1] = new Fnode(1, 1);
+        //t[2] = new Fnode(2, 2);
+        //t[3] = new Fnode(3, 3);
+        //t[4] = new Fnode(4, 4);
+        //t[5] = new Fnode(5, 5);
+        //t[6] = new Fnode(6, 6);
+        //t[7] = new Fnode(7, 7);
         //b.insert(t[0], 0);
         //b.insert(t[1], 1);
         //b.insert(t[2], 12);
@@ -338,52 +338,5 @@ public class FibonacciHeap
         }
     }
     
-}
-
-class FibonacciHeapNode
-{
-    int data;
-
-    FibonacciHeapNode child;
-
-    /**
-     * left sibling node
-     */
-    FibonacciHeapNode left;
-
-    /**
-     * parent node
-     */
-    FibonacciHeapNode parent;
-
-    /**
-     * right sibling node
-     */
-    FibonacciHeapNode right;
-
-    /**
-     * true if this node has had a child removed since this node was added to
-     * its parent
-     */
-    boolean mark;
-
-    /**
-     * key value for this node
-     */
-    int key;
-
-    /**
-     * number of children of this node (does not count grandchildren)
-     */
-    int degree;
-
-    public FibonacciHeapNode(int data, int key)
-    {
-        right = this;
-        left = this;
-        this.data = data;
-        this.key = key;
-    }
-
 }
 

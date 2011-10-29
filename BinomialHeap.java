@@ -1,42 +1,7 @@
-
-class Node
-{
-    /** The object stored in this node. */
-    public int key;
-
-    public int vertex;
-
-    /** This node's parent, or <code>null</code> if this node is a
-     * root. */
-    public Node p;
-
-    /** This node's leftmost child, or <code>null</code> if this
-     * node has no children. */
-    public Node child;
-
-    /** This node's right sibling, or <code>null</code> if this
-     * node has no right sibling. */
-    public Node sibling;
-
-    /** the number of children that this node has. */
-    public int degree;
-
-    /** Creates New node **/
-    public Node(int vertex, int weight)
-    {
-        key = weight;
-        this.vertex = vertex;
-        p = null;
-        child = null;
-        sibling = null;
-        degree = 0;
-    }
-}
-
 public class BinomialHeap
 {
     /** The head of the singly linked root list. */
-    private Node head;
+    private Bnode head;
 
     /** Creates an empty binomial heap. */
     public BinomialHeap()
@@ -44,7 +9,7 @@ public class BinomialHeap
         head = null;        // make an empty root list
     }
 
-    public void insert(Node x)
+    public void insert(Bnode x)
     {
         BinomialHeap hPrime = new BinomialHeap();
         hPrime.head = x;
@@ -65,10 +30,10 @@ public class BinomialHeap
             return -1;
 
         // Find the root x with the minimum key in the root list.
-        Node x = head;      // node with minimum key
-        Node y = x.sibling; // current node being examined
-        Node pred = x;      // y's predecessor
-        Node xPred = null;  // predecessor of x
+        Bnode x = head;      // node with minimum key
+        Bnode y = x.sibling; // current node being examined
+        Bnode pred = x;      // y's predecessor
+        Bnode xPred = null;  // predecessor of x
 
         while (y != null) {
             if (y.key < x.key) {
@@ -91,7 +56,7 @@ public class BinomialHeap
      * or <code>null</code> if <code>x</code> is the first node in the
      * root list.
      */
-    private void removeFromRootList(Node x, Node pred)
+    private void removeFromRootList(Bnode x, Bnode pred)
     {
         // Splice out x.
         if (x == head)
@@ -103,9 +68,9 @@ public class BinomialHeap
 
         // Reverse the order of x's children, setting hPrime.head to
         // point to the head of the resulting list.
-        Node z = x.child;
+        Bnode z = x.child;
         while (z != null) {
-            Node next = z.sibling;
+            Bnode next = z.sibling;
             z.sibling = hPrime.head;
             hPrime.head = z;
             z = next;
@@ -141,9 +106,9 @@ public class BinomialHeap
         if (h.head == null)
             return h;
 
-        Node prevX = null;
-        Node x = h.head;
-        Node nextX = x.sibling;
+        Bnode prevX = null;
+        Bnode x = h.head;
+        Bnode nextX = x.sibling;
 
         while (nextX != null) {
             if (x.degree != nextX.degree ||
@@ -183,7 +148,7 @@ public class BinomialHeap
      * @param z The root of another binomial tree; this root becomes
      * the parent of <code>y</code>.
      */
-    private void binomialLink(Node y, Node z)
+    private void binomialLink(Bnode y, Bnode z)
     {
         y.p = z;
         y.sibling = z.child;
@@ -200,7 +165,7 @@ public class BinomialHeap
      * @param h2 The other binomial heap.
      * @return The head of the merged list.
      */
-    private static Node binomialHeapMerge(BinomialHeap h1, BinomialHeap h2)
+    private static Bnode binomialHeapMerge(BinomialHeap h1, BinomialHeap h2)
     {
         // If either root list is empty, just return the other.
         if (h1.head == null)
@@ -211,9 +176,9 @@ public class BinomialHeap
             // Neither root list is empty.  Scan through both, always
             // using the node whose degree is smallest of those not
             // yet taken.
-            Node head;        // head of merged list
-            Node tail;        // last node added to merged list
-            Node h1Next = h1.head,
+            Bnode head;        // head of merged list
+            Bnode tail;        // last node added to merged list
+            Bnode h1Next = h1.head,
                  h2Next = h2.head; // next nodes to be examined in h1 and h2
 
             if (h1.head.degree <= h2.head.degree) {
@@ -260,12 +225,12 @@ public class BinomialHeap
      * Binomial-Heap-Decrease-Key procedure on page 470.
      *
      */
-    public void decreaseKey(int vertex, int k, Node[] dist)
+    public void decreaseKey(int vertex, int k, Bnode[] dist)
     {
-        Node x = dist[vertex];
+        Bnode x = dist[vertex];
         x.key = k; // update x's key
-        Node y = x;
-        Node z = y.p;
+        Bnode y = x;
+        Bnode z = y.p;
 
         while (z != null && (y.key < z.key )) {
             // Exchange the contents of y and z
@@ -287,16 +252,16 @@ public class BinomialHeap
 
     public static void main(String[] args){
         BinomialHeap b = new BinomialHeap();
-        Node[] t;
-        t = new Node[10];
-        t[0] = new Node(0, 14);
-        t[1] = new Node(1, 4);
-        t[2] = new Node(2, 24);
-        t[3] = new Node(3, 34);
-        t[4] = new Node(4, 4);
-        t[5] = new Node(5, 54);
-        t[6] = new Node(6, 10);
-        t[7] = new Node(7, 7);
+        Bnode[] t;
+        t = new Bnode[10];
+        t[0] = new Bnode(0, 14);
+        t[1] = new Bnode(1, 4);
+        t[2] = new Bnode(2, 24);
+        t[3] = new Bnode(3, 34);
+        t[4] = new Bnode(4, 4);
+        t[5] = new Bnode(5, 54);
+        t[6] = new Bnode(6, 10);
+        t[7] = new Bnode(7, 7);
         b.insert(t[0]);
         b.insert(t[1]);
         b.insert(t[2]);
