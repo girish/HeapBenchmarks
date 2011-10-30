@@ -1,4 +1,7 @@
-
+/**
+ * Common interface need for Indexed Priority Queue used in dijkstra
+ * algorithm.
+ */ 
 interface PQ {
     public int removeMin();
     public void decreaseKey(int vertex, int newValue);

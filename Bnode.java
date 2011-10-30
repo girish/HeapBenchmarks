@@ -1,27 +1,24 @@
 
 class Bnode
 {
-    /** The object stored in this node. */
+    //key to min
     public int key;
 
+    // data for vertex
     public int vertex;
 
-    /** This node's parent, or <code>null</code> if this node is a
-     * root. */
+    //parent node
     public Bnode p;
 
-    /** This node's leftmost child, or <code>null</code> if this
-     * node has no children. */
+    //pointer to first child
     public Bnode child;
 
-    /** This node's right sibling, or <code>null</code> if this
-     * node has no right sibling. */
+    //pointer to sibling
     public Bnode sibling;
 
-    /** the number of children that this node has. */
+    //no of children
     public int degree;
 
-    /** Creates New node **/
     public Bnode(int vertex, int weight)
     {
         key = weight;

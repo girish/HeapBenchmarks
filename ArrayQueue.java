@@ -1,6 +1,6 @@
 class ArrayQueue implements PQ{
-    private int[] dist;
-    private boolean[] visited;
+    private int[] dist; //actual distance array.
+    private boolean[] visited; //check for visited nodes.
     private int size;
 
     public ArrayQueue(int[] dist){
@@ -12,11 +12,17 @@ class ArrayQueue implements PQ{
             visited[i]=false;
     }
 
+
+    /** remove min element from array.
+     */
     public int removeMin(){
         int v =0;
+        //initialize with non visited node.
         for (int i=0;i<dist.length;i++)
             if((!visited[i]))
                     v = i;
+        //find min among non visited nodes
+        //O(n) runtime.
         for (int i=0;i<dist.length;i++)
             if((!visited[i]) && (dist[i] < dist[v]))
                 v=i;
@@ -33,8 +39,10 @@ class ArrayQueue implements PQ{
     }
 
     public boolean isEmpty(){
+        //check if any non inifinity node is not visited yet.
         for (int i=0;i<dist.length;i++)
             if((dist[i] != Graph.INFINITY) && (!visited[i])){
+                //System.out.println("G"+i);
                 return false;
             }
         return true;

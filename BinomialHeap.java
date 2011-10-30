@@ -1,12 +1,15 @@
 public class BinomialHeap
 {
-    private Bnode head;
+    private Bnode head; //head of root list.
 
     public BinomialHeap()
     {
         head = null;        // make an empty root list
     }
 
+    /**
+     * Inserts element in to the Heap by making heap with one element and merging it.
+    */
     public void insert(Bnode x)
     {
         BinomialHeap h = new BinomialHeap();
@@ -18,56 +21,6 @@ public class BinomialHeap
 
     public boolean isEmpty(){
         return head == null;
-    }
-
-    /**
-     *  Merge this heap with another Binomail Heap.
-     *  h2 heap to be merged.
-    */
-    public BinomialHeap union(BinomialHeap h2)
-    {
-        BinomialHeap h = new BinomialHeap();
-        h.head = binomialHeapMerge(this, h2);
-        head = null;                 // no longer using the...
-        h2.head = null; // ...two input lists
-
-        if (h.head == null)
-            return h;
-
-        Bnode prevX = null;
-        Bnode x = h.head;
-        Bnode nextX = x.sibling;
-
-        //Merge ones with same degrees.
-
-        while (nextX != null) {
-            if (x.degree != nextX.degree || (nextX.sibling != null && nextX.sibling.degree == x.degree)) {
-                // Cases 1 and 2.
-                prevX = x;
-                x = nextX;
-            }
-            else {
-                if (x.key < nextX.key) {
-                    // Case 3.
-                    x.sibling = nextX.sibling;
-                    pair(nextX, x);
-                }
-                else {
-                    // Case 4.
-                    if (prevX == null)
-                        h.head = nextX;
-                    else
-                        prevX.sibling = nextX;
-
-                    pair(x, nextX);
-                    x = nextX;
-                }
-            }
-
-            nextX = x.sibling;
-        }
-
-        return h;
     }
 
     /**
@@ -83,10 +36,63 @@ public class BinomialHeap
         z.degree++;
     }
 
+    /**
+     *  Merge this heap with another Binomail Heap.
+     *  h2 heap to be merged.
+    */
+    public BinomialHeap union(BinomialHeap h2)
+    {
+        BinomialHeap h = new BinomialHeap();
+        h.head = binomialHeapMerge(this, h2); //merge root lists for both heaps
+        head = null; // no longer using the...
+        h2.head = null; //two input lists
+
+        if (h.head == null)
+            return h;
+
+        //Preparing to compare two consective nodes
+        Bnode prevX = null;
+        Bnode x = h.head;
+        Bnode nextX = x.sibling;
+
+        //Merge ones with same degrees. algo from cormen.
+
+        while (nextX != null) {
+            //when degree are not equal or this is not last two node when equal move
+            //forward.
+            if (x.degree != nextX.degree || (nextX.sibling != null && nextX.sibling.degree == x.degree)) {
+                prevX = x;
+                x = nextX;
+            }
+            else {
+                //if degrees are equal prepare for  compare keys.
+                if (x.key < nextX.key) { //when current is less than next
+                    x.sibling = nextX.sibling;
+                    pair(nextX, x);//combine trees with same degree
+                }
+                else {
+                    // when current is > next.
+                    if (prevX == null)
+                        h.head = nextX;
+                    else
+                        prevX.sibling = nextX;
+
+                    pair(x, nextX); //combine trees with same degree
+                    x = nextX;
+                }
+            }
+
+            nextX = x.sibling;
+        }
+
+        return h;
+    }
+
+
 
     /**
-     *
-     *
+     *Make a root list with head of trees from BinomialHeaps h1 and h2
+     *in sorted order of degree.
      */
 
     private static Bnode binomialHeapMerge(BinomialHeap h1, BinomialHeap h2)
@@ -102,6 +108,8 @@ public class BinomialHeap
             Bnode h1Next = h1.head,
                   h2Next = h2.head; // next nodes to be examined in h1 and h2
 
+            //Initialize for comparision
+            //head contains smallest one
             if (h1.head.degree <= h2.head.degree) {
                 head = h1.head;
                 h1Next = h1Next.sibling;
@@ -149,8 +157,8 @@ public class BinomialHeap
 
         Bnode x = head;      // node with minimum key
         Bnode y = x.sibling; // current node being examined
-        Bnode pred = x;      // y's predecessor
-        Bnode xPred = null;  // predecessor of x
+        Bnode pred = x;      // y predecessor
+        Bnode xPred = null;  // x predecessor
 
         // Determine the root x with the minimum key in the root list.
         while (y != null) {
@@ -167,7 +175,7 @@ public class BinomialHeap
         else
             xPred.sibling = x.sibling;
 
-        //Add children to new Bheap and merge with existing tree.
+        //Add children to new Bheap and union with existing tree.
         BinomialHeap h = new BinomialHeap();
 
         Bnode z = x.child;
@@ -183,9 +191,8 @@ public class BinomialHeap
     }
 
     /**
-     * Decreases the key of a node.  Implements the
-     * Binomial-Heap-Decrease-Key procedure on page 470.
-     *
+     * Decreases the key of a node. Last arguement we pass the index of nodes
+     * to make search/contains operation in dijkstra O(1)
      */
     public void decreaseKey(int vertex, int k, Bnode[] dist)
     {
@@ -194,8 +201,10 @@ public class BinomialHeap
         Bnode y = x;
         Bnode z = y.p;
 
+        //move node up if it voilates heap property
         while (z != null && (y.key < z.key )) {
             // Exchange the contents of y and z
+            // mangles references to dist.
             int v = y.key;
             y.key = z.key;
             z.key = v;

@@ -1,7 +1,11 @@
+/**
+ * Wraps around FibonacciHeap to make an indexed heap.
+ */
+
 class FibonacciQueue implements PQ {
 
     private int[] dist;
-    private Fnode[] d;
+    private Fnode[] d; //index for nodes to make O(1) contains
     private FibonacciHeap f;
     private int size;
 
@@ -16,25 +20,30 @@ class FibonacciQueue implements PQ {
             d[i]=null;
     }
 
+    //delegate it to FibonacciHeap f
     public int removeMin(){
         return f.removeMin();
     }
 
+    //delegate it to FibonacciHeap f
     public void decreaseKey(int vertex, int newValue){
         dist[vertex] = newValue;
         f.decreaseKey(d[vertex],newValue);
     }
 
+    //delegate it to FibonacciHeap f
     public void insert(int vertex, int weight){
         dist[vertex]=weight;
         d[vertex] = new Fnode(vertex, weight);
         f.insert(d[vertex]);
     }
 
+    //delegate it to FibonacciHeap f
     public boolean isEmpty(){
         return f.isEmpty();
     }
 
+    //make use of our index.
     public boolean contains(int vertex){
         return (d[vertex] != null);
     }

@@ -1,13 +1,10 @@
-
-import java.util.*;
-
-
 public class FibonacciHeap
 {
     private Fnode min;
 
-    private int nCount;
+    private int nCount;//total node count
 
+    //Initialize empty heap
     public FibonacciHeap()
     {
         min = null;
@@ -19,12 +16,11 @@ public class FibonacciHeap
         return min == null;
     }
 
+    /**
+     * Decrease key of a node. 
+     */
     public void decreaseKey(Fnode d, int k)
     {
-        if (k > d.key) {
-            throw new IllegalArgumentException("Not a valid key");
-        }
-
         d.key = k;
 
         Fnode p = d.parent;
@@ -32,7 +28,7 @@ public class FibonacciHeap
         //When it voilates heap property other do nothing.
         if ((p != null) && (d.key < p.key)) {
             cut(d, p); // cut d and put it in root list
-            cascadingCut(p);// cut all nodes that are marked and mark the first unmarked one encountered
+            cascadingCut(p);// cut all nodes that are marked false stop at the first unmarked one encountered and mark true.
         }
 
         if (d.key < min.key) {
@@ -64,7 +60,7 @@ public class FibonacciHeap
         nCount++;
     }
 
-    /** Remove min key from 
+    /** Remove min key from Heap. 
      *
      */
     public int removeMin()
@@ -104,7 +100,7 @@ public class FibonacciHeap
                 min = null;
             } else {
                 min = z.right;
-                consolidate();
+                consolidate(); // pair heaps if neccassary
             }
 
             // decrement size of heap
@@ -114,11 +110,11 @@ public class FibonacciHeap
         return z.data;
     }
 
-    public int size()
-    {
-        return nCount;
-    }
 
+    /**
+     * Travel above, cut all nodes that are marked true and add them to root list
+     * stop at first unmarked node and mark it true.
+     */
     protected void cascadingCut(Fnode y)
     {
         Fnode z = y.parent;
@@ -138,6 +134,11 @@ public class FibonacciHeap
         }
     }
 
+    /**
+     * Combine/Pair nodes with same degrees after remove min.
+     * algo described in cormen.
+     */
+
     protected void consolidate()
     {
         // limit for possible degrees based on Fibonacci gloden 
@@ -146,13 +147,12 @@ public class FibonacciHeap
 
         int arraySize = (int) Math.floor(Math.log(nCount) / Math.log(phi));
 
-        Fnode[] array=new Fnode[arraySize+1];
+        Fnode[] array=new Fnode[arraySize+1]; // degree index
 
         for (int i = 0; i < arraySize; i++) {
             array[i] = null;
         }
-
-        int numRoots = 0;
+        int numRoots = 0; //nodes in root list.
         Fnode x = min;
 
         if (x != null) {
@@ -171,7 +171,7 @@ public class FibonacciHeap
             int d = x.degree;
             Fnode next = x.right;
 
-            // ..and see if there's another of the same degree.
+            // go until u find node of same degree same degree.
             while (array[d]!=null) {
                 Fnode y = array[d];
                 // There is, make one of the nodes a child of the other.
@@ -182,10 +182,9 @@ public class FibonacciHeap
                     x = temp;
                 }
 
-                // Fnode<T> y disappears from root list.
-                pair(y, x);
+                pair(y, x); //pair nodes with same degree
 
-                // We've handled this degree, go to next one.
+                // set degree to null , go to next one.
                 array[d]= null;
                 d++;
             }
@@ -199,8 +198,7 @@ public class FibonacciHeap
             numRoots--;
         }
 
-        // Set min to null (effectively losing the root list) and
-        // reconstruct the root list from the array entries in array[].
+        // Reintialize tree from array
         min = null;
 
         for (int i = 0; i < arraySize; i++) {
@@ -209,7 +207,6 @@ public class FibonacciHeap
                 continue;
             }
 
-            // We've got a live one, add it to root list.
             if (min != null) {
                 // First remove node from root list.
                 y.left.right = y.right;
@@ -232,9 +229,6 @@ public class FibonacciHeap
     }
 
     /**
-     * .
-     *
-     *
      * x child of y to be removed from y's child list
      * y parent of x about to lose a child
      */
@@ -267,12 +261,9 @@ public class FibonacciHeap
         x.mark = false;
     }
 
-    // cut
-
     /**
      *  Pair/combine two node in root list during consolidate
      *  operation.
-     *
      * less node to become child
      * great x node to become parent
      */

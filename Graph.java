@@ -5,26 +5,42 @@ class Graph {
 
     public Graph(int vertices){
         this.vertices = vertices;
+        //initialize adjancency list.
         adj = new LinkedList[vertices];
         for(int i=0; i<vertices;i++ )
             adj[i] = new LinkedList();
     }
 
+     // clear all existing edges.
+    public void clear(){
+        adj = new LinkedList[vertices];
+        for(int i=0; i<vertices;i++ )
+            adj[i] = new LinkedList();
+    }
+
+
+    /**
+     * Generate random graph as described in assignment.
+     * */
     public void RandomGraph(int density){
         int edges = density*vertices*(vertices-1)/100 - vertices;
         RandomGraph();
         int i=0;
         while(i<edges)
         {
-            int x = (int) Math.round((vertices-1) * Math.random());
-            int y = (int) Math.round((vertices-1) * Math.random());
-            int weight = (int) Math.round(1 + 999 * Math.random());
+            int x = (int) Math.round((vertices-1) * Math.random());//random vertex from
+            int y = (int) Math.round((vertices-1) * Math.random());//random vertex to
+            int weight = (int) Math.round(1 + 999 * Math.random());// random weight
             //adj[x].add(y, weight);
-            if(addEdge(x,y, weight))
+            if(addEdge(x,y, weight)) // add edge only if not present
                 i++;
         }
         //Check Connected ness
-        //checkConnectedness();
+        if(!checkConnectedness()){
+            clear();
+            System.out.println("xx");
+            RandomGraph(density); // initialize again
+        }
     }
 
     public void RandomGraph(){
@@ -55,12 +71,19 @@ class Graph {
         return vertices;
     }
 
-
+    /**
+     * Run for one vertex for one scheme and return
+     * distance.
+     */
     public  int[] calculateDspFrom(int vertex, int scheme){
         Dsp d = new Dsp(this, vertex, scheme);
         return d.shortestPaths();
     }
 
+   /**
+    * Run dijkstra for all vertices and return distance
+    * matrix.
+    */
     public int[][] calculateDspForAll(int scheme){
         int[][] d = new int[vertices][vertices];
         for(int i=0; i<vertices;i++)
@@ -68,12 +91,13 @@ class Graph {
         return d;
     }
 
-    public void printDspMatrix(){
-    }
-
-
+   /**
+    * Profile dijkstra for all vertices and return
+    * time taken.
+    */
     public long profileDspForAll(int scheme){
         long start, stop;
+        //start profiling
         start = System.currentTimeMillis();
         for(int i=0; i<vertices;i++)
             calculateDspFrom(i, scheme);
@@ -81,6 +105,10 @@ class Graph {
         return stop - start;
     }
 
+    /**
+     * Profile for one vertex for one scheme and return
+     * time taken.
+     */
     public long profileDspForOne(int scheme){
         long start, stop;
         start = System.currentTimeMillis();
@@ -89,6 +117,10 @@ class Graph {
         return stop - start;
     }
 
+    /**
+     * Check whether graph is strongly connected by running
+     * dijkstra on one vertex as described in assignment.
+     */
     public boolean checkConnectedness(){
         int[] d;
         d = calculateDspFrom(1, 1);
@@ -105,10 +137,10 @@ class Graph {
             System.out.println(x);
         }
         Graph G;
-        G = new Graph(100);
+        G = new Graph(500);
 
-        G.RandomGraph(20);
+        G.RandomGraph(100);
         System.out.println("G Done!");
-        System.out.println(G.profileDspForOne(0));
+        System.out.println(G.profileDspForAll(0));
     }
 }

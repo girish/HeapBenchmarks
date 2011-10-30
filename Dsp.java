@@ -1,7 +1,7 @@
 class Dsp {
     private int[] dist;
     private int[] edge;
-    private PQ pq;
+    private PQ pq; // Indexed Priority Queue
     Graph g;
 
     public Dsp(Graph G, int source, int scheme){
@@ -13,9 +13,9 @@ class Dsp {
         //pq = new BinomialQueue(dist);
         //pq = new FibonacciQueue(dist);
         //
-        initializeScheme(scheme);
+        initializeScheme(scheme); // initialize queue depending on scheme
         for (int v = 0; v < G.noOfVertices(); v++)
-            dist[v] = Graph.INFINITY;
+            dist[v] = Graph.INFINITY; // all node distances are inifinity initially.
         dist[source] = 0;
 
         //relax vertices in order of distance from send
@@ -39,7 +39,7 @@ class Dsp {
 
     void relax(ListNode e, int v){
         int w = e.to();
-        if (dist[w] > dist[v] + e.weight()) {
+        if (dist[w] > dist[v] + e.weight()) { // check if its less than if it is relax it.
             dist[w] = dist[v] + e.weight();
             edge[w] = e.to();
             if (pq.contains(w))
