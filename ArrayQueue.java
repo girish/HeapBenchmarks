@@ -13,12 +13,14 @@ class ArrayQueue implements PQ{
     }
 
     public int removeMin(){
-        int v=0;
-        for (int i=0;i<size;i++)
-            if((visited[i] == false) && (dist[i] < dist[v]))
+        int v =0;
+        for (int i=0;i<dist.length;i++)
+            if((!visited[i]))
+                    v = i;
+        for (int i=0;i<dist.length;i++)
+            if((!visited[i]) && (dist[i] < dist[v]))
                 v=i;
         visited[v]=true;
-        size--;
         return v;
     }
 
@@ -31,10 +33,22 @@ class ArrayQueue implements PQ{
     }
 
     public boolean isEmpty(){
-        return size == 0;
+        for (int i=0;i<dist.length;i++)
+            if((dist[i] != Graph.INFINITY) && (!visited[i])){
+                return false;
+            }
+        return true;
+
     }
 
     public boolean contains(int vertex){
-        return (dist[vertex] != Graph.INFINITY);
+        return true;//(dist[vertex] != Graph.INFINITY);
     }
+
+
+    public static void main(String[] args){
+        //ArrayQueue a = new ArrayQueue();
+
+    }
+
 }

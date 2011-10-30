@@ -16,8 +16,8 @@ class BinomialQueue implements PQ {
             d[i]=null;
     }
 
-    public int delMin(){
-        return b.extractMin();
+    public int removeMin(){
+        return b.removeMin();
     }
 
     public void decreaseKey(int vertex, int newValue){

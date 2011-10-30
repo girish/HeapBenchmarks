@@ -16,7 +16,7 @@ class FibonacciQueue implements PQ {
             d[i]=null;
     }
 
-    public int delMin(){
+    public int removeMin(){
         return f.removeMin();
     }
 

@@ -4,16 +4,14 @@ import java.util.*;
 
 public class FibonacciHeap
 {
-
-
     private Fnode min;
 
-    private int nNodes;
+    private int nCount;
 
     public FibonacciHeap()
     {
         min = null;
-        nNodes =0;
+        nCount =0;
     }
 
     public boolean isEmpty()
@@ -21,27 +19,33 @@ public class FibonacciHeap
         return min == null;
     }
 
-    public void decreaseKey(Fnode x, int k)
+    public void decreaseKey(Fnode d, int k)
     {
-        if (k > x.key) {
-            throw new IllegalArgumentException(
-                "decreaseKey() got larger key value");
+        if (k > d.key) {
+            throw new IllegalArgumentException("Not a valid key");
         }
 
-        x.key = k;
+        d.key = k;
 
-        Fnode y = x.parent;
+        Fnode p = d.parent;
 
-        if ((y != null) && (x.key < y.key)) {
-            cut(x, y);
-            cascadingCut(y);
+        //When it voilates heap property other do nothing.
+        if ((p != null) && (d.key < p.key)) {
+            cut(d, p); // cut d and put it in root list
+            cascadingCut(p);// cut all nodes that are marked and mark the first unmarked one encountered
         }
 
-        if (x.key < min.key) {
-            min = x;
+        if (d.key < min.key) {
+            min = d;
         }
     }
 
+    /** Just insert in doubly linked list at root
+     * change root if inserted key is less than current 
+     * root
+     *
+     * node: node to insert
+     */
     public void insert(Fnode node)
     {
         if (min != null) {
@@ -57,10 +61,12 @@ public class FibonacciHeap
             min = node;
         }
 
-        nNodes++;
+        nCount++;
     }
 
-
+    /** Remove min key from 
+     *
+     */
     public int removeMin()
     {
         Fnode z = min;
@@ -102,7 +108,7 @@ public class FibonacciHeap
             }
 
             // decrement size of heap
-            nNodes--;
+            nCount--;
         }
 
         return z.data;
@@ -110,7 +116,7 @@ public class FibonacciHeap
 
     public int size()
     {
-        return nNodes;
+        return nCount;
     }
 
     protected void cascadingCut(Fnode y)
@@ -132,15 +138,15 @@ public class FibonacciHeap
         }
     }
 
-    // cascadingCut
-
     protected void consolidate()
     {
+        // limit for possible degrees based on Fibonacci gloden 
+        // ratio.
         final double phi = (1.0 + Math.sqrt(5.0)) / 2.0;
 
-        int arraySize = (int) Math.floor(Math.log(nNodes) / Math.log(phi));
+        int arraySize = (int) Math.floor(Math.log(nCount) / Math.log(phi));
 
-        Fnode[] array=new Fnode[arraySize];
+        Fnode[] array=new Fnode[arraySize+1];
 
         for (int i = 0; i < arraySize; i++) {
             array[i] = null;
@@ -177,7 +183,7 @@ public class FibonacciHeap
                 }
 
                 // Fnode<T> y disappears from root list.
-                link(y, x);
+                pair(y, x);
 
                 // We've handled this degree, go to next one.
                 array[d]= null;
@@ -226,17 +232,15 @@ public class FibonacciHeap
     }
 
     /**
-     * The reverse of the link operation: removes x from the child list of y.
-     * This method assumes that min is non-null.
+     * .
      *
-     * <p>Running time: O(1)</p>
      *
-     * @param x child of y to be removed from y's child list
-     * @param y parent of x about to lose a child
+     * x child of y to be removed from y's child list
+     * y parent of x about to lose a child
      */
     protected void cut(Fnode x, Fnode y)
     {
-        // remove x from childlist of y and decrement degree[y]
+        // remove x from childlist of y and decrease degree[y]
         x.left.right = x.right;
         x.right.left = x.left;
         y.degree--;
@@ -266,43 +270,38 @@ public class FibonacciHeap
     // cut
 
     /**
-     * Make node y a child of node x.
+     *  Pair/combine two node in root list during consolidate
+     *  operation.
      *
-     * <p>Running time: O(1) actual</p>
-     *
-     * @param y node to become child
-     * @param x node to become parent
+     * less node to become child
+     * great x node to become parent
      */
-    protected void link(Fnode y, Fnode x)
+    protected void pair(Fnode less, Fnode great)
     {
-        // remove y from root list of heap
-        y.left.right = y.right;
-        y.right.left = y.left;
+        // remove less from root list of heap
+        less.left.right = less.right;
+        less.right.left = less.left;
 
-        // make y a child of x
-        y.parent = x;
+        // make less a child of great
+        less.parent = great;
 
-        if (x.child == null) {
-            x.child = y;
-            y.right = y;
-            y.left = y;
+        if (great.child == null) {
+            great.child = less;
+            less.right = less;
+            less.left = less;
         } else {
-            y.left = x.child;
-            y.right = x.child.right;
-            x.child.right = y;
-            y.right.left = y;
+            less.left = great.child;
+            less.right = great.child.right;
+            great.child.right = less;
+            less.right.left = less;
         }
 
-        // increase degree[x]
-        x.degree++;
-
-        // set mark[y] false
-        y.mark = false;
+        // increase degree[great] and mark as false as it is in
+        // root list.
+        great.degree++;
+        less.mark = false;
     }
 
-    // link
-    //
-    //
     public static void main(String[] args){
         FibonacciHeap b = new FibonacciHeap();
         Fnode[] t;
@@ -327,16 +326,16 @@ public class FibonacciHeap
         //b.insert(t[5], 15);
         //b.insert(t[6], 16);
         //b.insert(t[7], 17);
-        //b.decreaseKey(t[3],3);
+        b.decreaseKey(t[3],3);
         ////b.decreaseKey(3,3);
-        //b.decreaseKey(t[4],4);
-        ////b.decreaseKey(6,6);
+        b.decreaseKey(t[4],4);
+        ///b.decreaseKey(6,6);
 
         while( !b.isEmpty()){
             int x = b.removeMin();
             System.out.println(t[x].data + "--" + x +"---" + t[x].key);
         }
     }
-    
+
 }
 
