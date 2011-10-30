@@ -2,6 +2,7 @@ class ArrayQueue implements PQ{
     private int[] dist;
     private boolean[] visited;
     private int size;
+
     public ArrayQueue(int[] dist){
         this.size  = dist.length;
         //this.dist = new int[size];
@@ -10,15 +11,17 @@ class ArrayQueue implements PQ{
         for(int i=0;i<size;i++)
             visited[i]=false;
     }
-    
-    public int delMin(){
+
+    public int removeMin(){
         int v=0;
         for (int i=0;i<size;i++)
-            if(visited[i] == false && (dist[i] < dist[v]))
+            if((visited[i] == false) && (dist[i] < dist[v]))
                 v=i;
         visited[v]=true;
+        size--;
         return v;
     }
+
     public void decreaseKey(int vertex, int newValue){
         dist[vertex] = newValue;
     }
@@ -28,12 +31,9 @@ class ArrayQueue implements PQ{
     }
 
     public boolean isEmpty(){
-        // works for non Connected graph
-        boolean x=true;
-        for(int i=0;i<size;i++)
-            x &= (visited[i] | (dist[i] == Graph.INFINITY));
-        return x;
+        return size == 0;
     }
+
     public boolean contains(int vertex){
         return (dist[vertex] != Graph.INFINITY);
     }
