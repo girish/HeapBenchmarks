@@ -5,7 +5,7 @@ class Dsp {
     Graph g;
 
     public Dsp(Graph G, int source, int scheme){
-        //Dijkstra algo desecribed in project 
+        //Dijkstra algo desecribed in project
         dist = new int[G.noOfVertices()];
         edge = new int[G.noOfVertices()];
         this.g = G;

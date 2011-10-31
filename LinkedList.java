@@ -1,7 +1,7 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
+// Node with vertex and distance wieght.
 class ListNode {
     int toVertex;
     int weight;
@@ -18,16 +18,18 @@ class ListNode {
         return weight;
     }
 }
-
+/**
+ * LinkedList class used in Graph.
+ */
 class LinkedList implements Iterable<ListNode>{
     public ListNode head;
     private ListNode last;
     private int size;
     public LinkedList(){
         this.head = null;
-        last = head;
+        last = head; // easy insertion
     }
-    
+
     public void add(int vertex, int weight){
         if(last==null){
            this.head = new ListNode(vertex, weight);
@@ -54,6 +56,7 @@ class LinkedList implements Iterable<ListNode>{
         return new ListIterator();
     }
 
+    // for easy iteration
     private class ListIterator implements Iterator<ListNode> {
         private ListNode current = head;
 

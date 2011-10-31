@@ -17,7 +17,7 @@ public class FibonacciHeap
     }
 
     /**
-     * Decrease key of a node. 
+     * Decrease key of a node.
      */
     public void decreaseKey(Fnode d, int k)
     {
@@ -37,7 +37,7 @@ public class FibonacciHeap
     }
 
     /** Just insert in doubly linked list at root
-     * change root if inserted key is less than current 
+     * change root if inserted key is less than current
      * root
      *
      * node: node to insert
@@ -60,46 +60,43 @@ public class FibonacciHeap
         nCount++;
     }
 
-    /** Remove min key from Heap. 
+    /** Remove min key from Heap.
      *
      */
     public int removeMin()
     {
-        Fnode z = min;
+        Fnode tempH = min;
 
-        if (z != null) {
-            int numKids = z.degree;
-            Fnode x = z.child;
+        if (tempH != null) {
+            Fnode current = tempH.child;
             Fnode tempRight;
+            // for each child of tempH do...
+            for(int i=tempH.degree;i>0;i--) {
+                tempRight = current.right;
 
-            // for each child of z do...
-            while (numKids > 0) {
-                tempRight = x.right;
+                // remove current from child list
+                current.left.right = current.right;
+                current.right.left = current.left;
 
-                // remove x from child list
-                x.left.right = x.right;
-                x.right.left = x.left;
+                // add current to root list of heap
+                current.left = min;
+                current.right = min.right;
+                min.right = current;
+                current.right.left = current;
 
-                // add x to root list of heap
-                x.left = min;
-                x.right = min.right;
-                min.right = x;
-                x.right.left = x;
-
-                // set parent[x] to null
-                x.parent = null;
-                x = tempRight;
-                numKids--;
+                // set parent[current] to null
+                current.parent = null;
+                current = tempRight;
             }
 
-            // remove z from root list of heap
-            z.left.right = z.right;
-            z.right.left = z.left;
+            // remove tempH from root list of heap
+            tempH.left.right = tempH.right;
+            tempH.right.left = tempH.left;
 
-            if (z == z.right) {
+            if (tempH == tempH.right) {
                 min = null;
             } else {
-                min = z.right;
+                min = tempH.right;
                 consolidate(); // pair heaps if neccassary
             }
 
@@ -107,7 +104,7 @@ public class FibonacciHeap
             nCount--;
         }
 
-        return z.data;
+        return tempH.data;
     }
 
 
@@ -141,41 +138,43 @@ public class FibonacciHeap
 
     protected void consolidate()
     {
-        // limit for possible degrees based on Fibonacci gloden 
+        if(min == null)
+            return;
+
+        // limit for possible degrees based on Fibonacci gloden
         // ratio.
         final double phi = (1.0 + Math.sqrt(5.0)) / 2.0;
 
-        int arraySize = (int) Math.floor(Math.log(nCount) / Math.log(phi));
+        int dCount = (int) Math.floor(Math.log(nCount) / Math.log(phi));
 
-        Fnode[] array=new Fnode[arraySize+1]; // degree index
+        Fnode[] dIndex=new Fnode[dCount+1]; // degree index
 
-        for (int i = 0; i < arraySize; i++) {
-            array[i] = null;
+        for (int i = 0; i < dCount; i++) {
+            dIndex[i] = null;
         }
-        int numRoots = 0; //nodes in root list.
+        int rootCount = 0; //nodes in root list.
         Fnode x = min;
 
         if (x != null) {
-            numRoots++;
+            rootCount++;
             x = x.right;
 
             while (x != min) {
-                numRoots++;
+                rootCount++;
                 x = x.right;
             }
         }
 
         // For each node in root list do...
-        while (numRoots > 0) {
+        while (rootCount > 0) {
             // Access this node's degree..
             int d = x.degree;
             Fnode next = x.right;
 
             // go until u find node of same degree same degree.
-            while (array[d]!=null) {
-                Fnode y = array[d];
-                // There is, make one of the nodes a child of the other.
-                // Do this based on the key value.
+            while (dIndex[d]!=null) {
+                Fnode y = dIndex[d];
+
                 if (x.key > y.key) {
                     Fnode temp = y;
                     y = x;
@@ -185,80 +184,78 @@ public class FibonacciHeap
                 pair(y, x); //pair nodes with same degree
 
                 // set degree to null , go to next one.
-                array[d]= null;
+                dIndex[d]= null;
                 d++;
             }
 
             // Save this node for later when we might encounter another
             // of the same degree.
-            array[d]= x;
+            dIndex[d]= x;
 
-            // Move forward through list.
             x = next;
-            numRoots--;
+            rootCount--;
         }
 
-        // Reintialize tree from array
+        // Reintialize tree from dIndex
         min = null;
 
-        for (int i = 0; i < arraySize; i++) {
-            Fnode y = array[i];
-            if (y == null) {
-                continue;
-            }
+        for (int i = 0; i < dCount; i++) {
+            Fnode y = dIndex[i];
+            if (y!= null) {
+                if (min != null) {
+                    // First remove node from root list.
+                    y.left.right = y.right;
+                    y.right.left = y.left;
 
-            if (min != null) {
-                // First remove node from root list.
-                y.left.right = y.right;
-                y.right.left = y.left;
+                    // Now add to root list, again.
+                    y.left = min;
+                    y.right = min.right;
+                    min.right = y;
+                    y.right.left = y;
 
-                // Now add to root list, again.
-                y.left = min;
-                y.right = min.right;
-                min.right = y;
-                y.right.left = y;
-
-                // Check if this is a new min.
-                if (y.key < min.key) {
+                    // Check if this is a new min.
+                    if (y.key < min.key) {
+                        min = y;
+                    }
+                } else {
                     min = y;
                 }
-            } else {
-                min = y;
             }
         }
     }
 
     /**
-     * x child of y to be removed from y's child list
-     * y parent of x about to lose a child
+     * Cut the node and put it in root list.
+     * node: to be removed
+     * paren: parent node to node
      */
-    protected void cut(Fnode x, Fnode y)
+    protected void cut(Fnode node, Fnode paren)
     {
         // remove x from childlist of y and decrease degree[y]
-        x.left.right = x.right;
-        x.right.left = x.left;
-        y.degree--;
+        node.left.right = node.right;
+        node.right.left = node.left;
+        paren.degree--;
 
-        // reset y.child if necessary
-        if (y.child == x) {
-            y.child = x.right;
+        // reset paren.child if necessary
+        if (paren.child == node) {
+            paren.child = node.right;
         }
 
-        if (y.degree == 0) {
-            y.child = null;
+        if (paren.degree == 0) {
+            paren.child = null;
         }
 
-        // add x to root list of heap
-        x.left = min;
-        x.right = min.right;
-        min.right = x;
-        x.right.left = x;
+        // add node to root list of heap
+        node.left = min;
+        node.right = min.right;
+        min.right = node;
+        node.right.left = node;
 
-        // set parent[x] to nil
-        x.parent = null;
+        // set parent[node] to nil
+        node.parent = null;
 
-        // set mark[x] to false
-        x.mark = false;
+        // set mark[node] to false
+        node.mark = false;
     }
 
     /**

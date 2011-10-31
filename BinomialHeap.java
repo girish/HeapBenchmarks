@@ -15,7 +15,7 @@ public class BinomialHeap
         BinomialHeap h = new BinomialHeap();
         h.head = x;
         // create a heap with single node and merge it with current tree.
-        BinomialHeap newH = this.union(h);
+        BinomialHeap newH = this.meld(h);
         head = newH.head;
     }
 
@@ -40,12 +40,12 @@ public class BinomialHeap
      *  Merge this heap with another Binomail Heap.
      *  h2 heap to be merged.
     */
-    public BinomialHeap union(BinomialHeap h2)
+    public BinomialHeap meld(BinomialHeap h2)
     {
         BinomialHeap h = new BinomialHeap();
-        h.head = binomialHeapMerge(this, h2); //merge root lists for both heaps
-        head = null; // no longer using the...
-        h2.head = null; //two input lists
+        h.head = mergeRootList(this, h2); //merge root lists for both heaps sorted on degree of tree nodes.
+        head = null;
+        h2.head = null;
 
         if (h.head == null)
             return h;
@@ -95,7 +95,7 @@ public class BinomialHeap
      *in sorted order of degree.
      */
 
-    private static Bnode binomialHeapMerge(BinomialHeap h1, BinomialHeap h2)
+    private static Bnode mergeRootList(BinomialHeap h1, BinomialHeap h2)
     {
         // If either root list is empty, just return the other.
         if (h1.head == null)
@@ -155,12 +155,12 @@ public class BinomialHeap
         if (head == null)
             return -1;
 
-        Bnode x = head;      // node with minimum key
-        Bnode y = x.sibling; // current node being examined
-        Bnode pred = x;      // y predecessor
-        Bnode xPred = null;  // x predecessor
+        Bnode x = head;
+        Bnode y = x.sibling; // current node
+        Bnode pred = x;      // y prev
+        Bnode xPred = null;  // x prev
 
-        // Determine the root x with the minimum key in the root list.
+        // Determine the node x with the minimum key in the root list.
         while (y != null) {
             if (y.key < x.key) {
                 x = y;
@@ -175,7 +175,7 @@ public class BinomialHeap
         else
             xPred.sibling = x.sibling;
 
-        //Add children to new Bheap and union with existing tree.
+        //Add children to new Bheap and meld with existing tree.
         BinomialHeap h = new BinomialHeap();
 
         Bnode z = x.child;
@@ -185,7 +185,7 @@ public class BinomialHeap
             h.head = z;
             z = next;
         }
-        BinomialHeap newH = this.union(h);
+        BinomialHeap newH = this.meld(h);
         head = newH.head;
         return x.vertex;
     }

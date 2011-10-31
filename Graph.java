@@ -23,8 +23,8 @@ class Graph {
      * Generate random graph as described in assignment.
      * */
     public void RandomGraph(int density){
-        int edges = density*vertices*(vertices-1)/100 - vertices;
-        RandomGraph();
+        int edges = density*vertices*(vertices-1)/100;
+        //RandomGraph();
         int i=0;
         while(i<edges)
         {
@@ -38,7 +38,7 @@ class Graph {
         //Check Connected ness
         if(!checkConnectedness()){
             clear();
-            System.out.println("xx");
+            //System.out.println("xx");
             RandomGraph(density); // initialize again
         }
     }
@@ -139,8 +139,8 @@ class Graph {
         Graph G;
         G = new Graph(500);
 
-        G.RandomGraph(100);
+        G.RandomGraph(1);
         System.out.println("G Done!");
-        System.out.println(G.profileDspForAll(0));
+        System.out.println(G.profileDspForAll(2));
     }
 }
