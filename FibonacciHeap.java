@@ -112,11 +112,11 @@ public class FibonacciHeap
      * Travel above, cut all nodes that are marked true and add them to root list
      * stop at first unmarked node and mark it true.
      */
-    protected void cascadingCut(Fnode y)
+    private void cascadingCut(Fnode y)
     {
         Fnode z = y.parent;
 
-        // if there's a parent...
+        // if there is a parent...
         if (z != null) {
             // if y is unmarked, set it marked
             if (!y.mark) {
@@ -136,7 +136,7 @@ public class FibonacciHeap
      * algo described in cormen.
      */
 
-    protected void consolidate()
+    private void consolidate()
     {
         if(min == null)
             return;
@@ -229,7 +229,7 @@ public class FibonacciHeap
      * node: to be removed
      * paren: parent node to node
      */
-    protected void cut(Fnode node, Fnode paren)
+    private void cut(Fnode node, Fnode paren)
     {
         // remove x from childlist of y and decrease degree[y]
         node.left.right = node.right;
@@ -264,7 +264,7 @@ public class FibonacciHeap
      * less node to become child
      * great x node to become parent
      */
-    protected void pair(Fnode less, Fnode great)
+    private void pair(Fnode less, Fnode great)
     {
         // remove less from root list of heap
         less.left.right = less.right;
